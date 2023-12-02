@@ -1,5 +1,5 @@
 class Day1 {
-    fun day1task1(input: List<String>): Int {
+    fun task1(input: List<String>): Int {
         return input.sumOf { line ->
             val digit1 = line.first { char -> char.isDigit() }
             val digit2 = line.last { char -> char.isDigit() }
@@ -7,7 +7,7 @@ class Day1 {
         }
     }
 
-    fun day1task2(input: List<String>): Int {
+    fun task2(input: List<String>): Int {
         val replacements = mapOf<String, String>("one" to "1",
             "two" to "2",
             "three" to "3",
