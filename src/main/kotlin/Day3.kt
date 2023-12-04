@@ -52,14 +52,14 @@ class Day3 {
             }.filterNotNull()
         }.flatten()
     }
-    fun Number.hasAdjacentSymbol(symbols: List<Symbol>): Boolean {
-        return symbols.any {
-            it.row in this.row - 1..this.row + 1 &&
-                    it.index in this.startIndex - 1..this.endIndex
-        }
-    }
 }
 
+fun Number.hasAdjacentSymbol(symbols: List<Symbol>): Boolean {
+    return symbols.any {
+        it.row in this.row - 1..this.row + 1 &&
+                it.index in this.startIndex - 1..this.endIndex
+    }
+}
 
 
 data class Number (val row: Int, val startIndex: Int, val endIndex: Int, val value: Int)
