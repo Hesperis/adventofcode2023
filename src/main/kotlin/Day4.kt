@@ -9,17 +9,14 @@ class Day4 {
     }
 
     fun task2(input: List<String>): Int {
-        val maxCardIndex = input.size
         val cards = input.map { scratchcard ->
             val actualNumbers = parseScratchCard(scratchcard)
             Card(actualNumbers, 1)
         }
         cards.forEachIndexed { index, card ->
-            val hits = min(card.winningNumbers.size, maxCardIndex - index)
+            val hits = min(card.winningNumbers.size, input.size - index)
             repeat(card.amount) {
-                for (i in 1 .. hits) {
-                    cards[index + i].amount++
-                }
+                for (i in 1 .. hits) { cards[index + i].amount++ }
             }
         }
         return cards.sumOf { card -> card.amount }
@@ -27,8 +24,8 @@ class Day4 {
 
     private fun parseScratchCard(scratchcard: String): List<String> {
         val splitList = scratchcard.substringAfter(": ").split("| ")
-        val potentialWinners = splitList[0].split("\\s+".toRegex())
-        return splitList[1].split("\\s+".toRegex()).filter { number -> number in potentialWinners }
+        val potentialWinners = splitList[0].trim().split("\\s+".toRegex())
+        return splitList[1].trim().split("\\s+".toRegex()).filter { number -> number in potentialWinners }
     }
 
     data class Card (val winningNumbers: List<String>, var amount: Int)
