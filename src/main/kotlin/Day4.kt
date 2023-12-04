@@ -1,29 +1,21 @@
+import kotlin.math.min
+import kotlin.math.pow
+
 class Day4 {
     fun task1(input: List<String>): Int {
         return input.sumOf { scratchcard ->
-            val (winningNumbers, actualNumbers) = parseScratchCard(scratchcard)
-            var score = 0
-            actualNumbers.forEach {
-                if (it in winningNumbers) {
-                    when (score) {
-                        0 -> score = 1
-                        else -> score *= 2
-                    }
-                }
-            }
-            score
-        }
+            val winningNumbers = parseScratchCard(scratchcard)
+            winningNumbers.indices.fold(0.0) { _, i -> 2.toDouble().pow(i) } }.toInt()
     }
 
     fun task2(input: List<String>): Int {
-        val maxCardNumber = input.size
+        val maxCardIndex = input.size
         val cards = input.map { scratchcard ->
-            val (winningNumbers, actualNumbers) = parseScratchCard(scratchcard)
-            Card(winningNumbers, actualNumbers, 1)
+            val actualNumbers = parseScratchCard(scratchcard)
+            Card(actualNumbers, 1)
         }
         cards.forEachIndexed { index, card ->
-            var hits = card.actualNumbers.filter { it in card.winningNumbers }.size
-            if (index + hits > maxCardNumber) hits = maxCardNumber - index
+            val hits = min(card.winningNumbers.size, maxCardIndex - index)
             repeat(card.amount) {
                 for (i in 1 .. hits) {
                     cards[index + i].amount++
@@ -33,14 +25,11 @@ class Day4 {
         return cards.sumOf { card -> card.amount }
     }
 
-    private fun parseScratchCard(scratchcard: String): Pair<List<String>, List<String>> {
+    private fun parseScratchCard(scratchcard: String): List<String> {
         val splitList = scratchcard.substringAfter(": ").split("| ")
-        val winningNumbers =
-            splitList[0].trim().split(" ").map { it.takeWhile { it.isDigit() }.toString() }.filterNot { it == "" }
-        val actualNumbers =
-            splitList[1].trim().split(" ").map { it.takeWhile { it.isDigit() }.toString() }.filterNot { it == "" }
-        return Pair(winningNumbers, actualNumbers)
+        val potentialWinners = splitList[0].split("\\s+".toRegex())
+        return splitList[1].split("\\s+".toRegex()).filter { number -> number in potentialWinners }
     }
 
-    data class Card (val winningNumbers: List<String>, val actualNumbers: List<String>, var amount: Int)
+    data class Card (val winningNumbers: List<String>, var amount: Int)
 }
