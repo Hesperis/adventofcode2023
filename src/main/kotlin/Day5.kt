@@ -2,9 +2,9 @@ import kotlinx.coroutines.*
 
 class Day5 {
     fun task1(input: List<String>): Long {
-        val seeds = parseSeeds(input).asSequence()
+        val seeds = parseSeeds(input)
         val transformers = input.drop(2).filter { it == "" || it.first().isDigit() }.parseTransformers()
-        return runBlocking { traverseTransformers(seeds, transformers).min() }
+        return seeds.minOf { seed -> traverseTransformers(seed, transformers) }
     }
 
     fun task2(input: List<String>): Long {
@@ -18,7 +18,7 @@ class Day5 {
                 seedPair.map {
                     async(Dispatchers.Default) {
                         val seeds = (it.first until it.first + it.second).asSequence()
-                        val result = traverseTransformers(seeds, transformers).min().toLong()
+                        val result = seeds.minOf { seed -> traverseTransformers(seed, transformers) }
                         result
                     }
                 }.awaitAll()
@@ -42,15 +42,14 @@ class Day5 {
         if (buffer.isNotEmpty()) yield(buffer)
     }.toList()
 
-    private suspend fun traverseTransformers(
-        seeds: Sequence<Long>,
+    private fun traverseTransformers(
+        seed: Long,
         transformers: List<List<GardenTriple>>
-    ) = seeds.map { seed ->
-        transformers.fold(seed) { acc, gardenTriples ->
+    ) = transformers.fold(seed) { acc, gardenTriples ->
             val applicableMapping = gardenTriples.find { acc in it.sourceRange..it.sourceRange + it.length }
             if (applicableMapping != null) applicableMapping.destinationRange + (acc - applicableMapping.sourceRange) else acc
         }
-    }
+
 
     private fun String.splitToTriple(): GardenTriple {
         val list = this.split("\\s+".toRegex())
