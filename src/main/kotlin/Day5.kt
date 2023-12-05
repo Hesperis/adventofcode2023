@@ -8,18 +8,17 @@ class Day5 {
     }
 
     fun task2(input: List<String>): Long {
-        val seedPair: List<Pair<Long, Long>> = parseSeeds(input)
+        val seedPairs: List<Pair<Long, Long>> = parseSeeds(input)
             .chunked(2).map {
                 Pair(it[0], it[1])
             }
         val transformers = input.drop(2).filter { it == "" || it.first().isDigit() }.parseTransformers()
         return runBlocking {
             coroutineScope {
-                seedPair.map {
+                seedPairs.map {
                     async(Dispatchers.Default) {
                         val seeds = (it.first until it.first + it.second).asSequence()
-                        val result = seeds.minOf { seed -> traverseTransformers(seed, transformers) }
-                        result
+                        seeds.minOf { seed -> traverseTransformers(seed, transformers) }
                     }
                 }.awaitAll()
             }.min()
