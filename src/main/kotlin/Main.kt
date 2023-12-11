@@ -1,7 +1,7 @@
 import java.io.File
 
 fun main(args: Array<String>) {
-    val input = File("src/main/resources/day10/input").readLines()
-    println(Day10().task1(input))
-    println(Day10().task2(input))
+    val input = File("src/main/resources/day11/input").readLines()
+    println(Day11().task(input, 2))
+    println(Day11().task(input, 1000000))
 }
